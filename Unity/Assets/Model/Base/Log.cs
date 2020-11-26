@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ETModel
+namespace ET
 {
 	public static class Log
 	{
@@ -71,7 +71,7 @@ namespace ETModel
 
 		public static void Msg(object msg)
 		{
-			Debug(Dumper.DumpAsString(msg));
+			Debug(MongoHelper.ToJson(msg));
 		}
 	}
 }

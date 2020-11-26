@@ -4,7 +4,7 @@ using System.IO;
 using System.Net.WebSockets;
 using System.Threading;
 
-namespace ETModel
+namespace ET
 {
     public class WChannel: AChannel
     {
@@ -205,7 +205,7 @@ namespace ETModel
                         return;
                     }
 
-                    if (receiveResult.Count > ushort.MaxValue)
+                    if (receiveCount > ushort.MaxValue)
                     {
                         await this.webSocket.CloseAsync(WebSocketCloseStatus.MessageTooBig, $"message too big: {receiveResult.Count}",
                             cancellationTokenSource.Token);
@@ -213,7 +213,7 @@ namespace ETModel
                         return;
                     }
 
-                    this.recvStream.SetLength(receiveResult.Count);
+                    this.recvStream.SetLength(receiveCount);
                     this.OnRead(this.recvStream);
                 }
             }

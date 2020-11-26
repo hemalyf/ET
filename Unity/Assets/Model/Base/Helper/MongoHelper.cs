@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using MongoDB.Bson.Serialization.Conventions;
 using UnityEngine;
 
-namespace ETModel
+namespace ET
 {
 	public static class MongoHelper
 	{
@@ -105,19 +105,6 @@ namespace ETModel
 			{
 				return BsonSerializer.Deserialize(memoryStream, type);
 			}
-		}
-		
-		public static object FromBson(object instance, byte[] bytes, int index, int count)
-		{
-			using (MemoryStream memoryStream = new MemoryStream(bytes, index, count))
-			{
-				return BsonSerializer.Deserialize(memoryStream, instance.GetType());
-			}
-		}
-		
-		public static object FromBson(object instance, Stream stream)
-		{
-			return BsonSerializer.Deserialize(stream, instance.GetType());
 		}
 		
 		public static object FromStream(Type type, Stream stream)

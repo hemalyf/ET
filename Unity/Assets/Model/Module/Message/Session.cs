@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace ETModel
+namespace ET
 {
-	[ObjectSystem]
+	
 	public class SessionAwakeSystem : AwakeSystem<Session, AChannel>
 	{
 		public override void Awake(Session self, AChannel b)
@@ -129,19 +129,11 @@ namespace ETModel
 			memoryStream.Seek(Packet.MessageIndex, SeekOrigin.Begin);
 			ushort opcode = BitConverter.ToUInt16(memoryStream.GetBuffer(), Packet.OpcodeIndex);
 			
-#if !SERVER
-			if (OpcodeHelper.IsClientHotfixMessage(opcode))
-			{
-				this.GetComponent<SessionCallbackComponent>().MessageCallback.Invoke(this, opcode, memoryStream);
-				return;
-			}
-#endif
-			
 			object message;
 			try
 			{
-				object instance = OpcodeTypeComponent.Instance.GetInstance(opcode);
-				message = this.Network.MessagePacker.DeserializeFrom(instance, memoryStream);
+				Type type = OpcodeTypeComponent.Instance.GetType(opcode);
+				message = MessagePackHelper.DeserializeFrom(opcode, type, memoryStream);
 
 				if (OpcodeHelper.IsNeedDebugLogMessage(opcode))
 				{
@@ -268,7 +260,7 @@ namespace ETModel
 			
 			stream.Seek(Packet.MessageIndex, SeekOrigin.Begin);
 			stream.SetLength(Packet.MessageIndex);
-			this.Network.MessagePacker.SerializeTo(message, stream);
+			MessagePackHelper.SerializeTo(opcode, message, stream);
 			stream.Seek(0, SeekOrigin.Begin);
 			
 			opcodeBytes.WriteTo(0, opcode);
